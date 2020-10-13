@@ -7,6 +7,30 @@ const store = new Vuex.Store({
     state: {
         currency: {},
         cart: {},
+        token: localStorage.getItem('token') || '',
+        user : {},
+        status: '',
+    },
+    actions: {
+        register({commit}, user){
+            return new Promise((resolve, reject) => {
+                commit('auth_request')
+                axios({url: '/api/register', data: user, method: 'POST' })
+                    .then(resp => {
+                        const token = resp.data.token
+                        const user = resp.data.user
+                        localStorage.setItem('token', token)
+                        axios.defaults.headers.common['Authorization'] = token
+                        commit('auth_success', token, user)
+                        resolve(resp)
+                    })
+                    .catch(err => {
+                        commit('auth_error', err)
+                        localStorage.removeItem('token')
+                        reject(err)
+                    })
+            })
+        },
     },
     mutations: {
         setCurrency(state, currency) {
@@ -23,6 +47,21 @@ const store = new Vuex.Store({
                 state.cart[good.id]['count'] = state.cart[good.id]['count'] + 1;
             }
         },
+        auth_request(state){
+            state.status = 'loading'
+        },
+        auth_success(state, token, user){
+            state.status = 'success'
+            state.token = token
+            state.user = user
+        },
+        auth_error(state){
+            state.status = 'error'
+        },
+        logout(state){
+            state.status = ''
+            state.token = ''
+        },
     },
     getters: {
         getCart: state => {
@@ -37,6 +76,8 @@ const store = new Vuex.Store({
 
             return count;
         },
+        isLoggedIn: state => !!state.token,
+        authStatus: state => state.status,
     },
 });
 

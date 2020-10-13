@@ -30,9 +30,7 @@ Vue.filter('numFormat', numFormat(numeral));
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-// Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('v-select', vSelect);
-// Vue.component('app', require('./components/App.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -42,12 +40,21 @@ Vue.component('v-select', vSelect);
 
 import router from './router/index.js'
 import store from './store.js'
+import Axios from 'axios'
+
+Vue.prototype.$http = Axios;
+
+const token = localStorage.getItem('token');
+
+if (token) {
+    Vue.prototype.$http.defaults.headers.common['Authorization'] = token
+}
 
 new Vue({
     el: '#app',
-    store,
+    store: store,
     components: { App },
-    router,
+    router: router,
     beforeMount() {
         if(this.$localStorage.get('cart')) this.$store.commit('setCart', JSON.parse(this.$localStorage.get('cart')));
         if(this.$localStorage.get('currency')) this.$store.commit('setCurrency', JSON.parse(this.$localStorage.get('currency')));
