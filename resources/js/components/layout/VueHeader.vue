@@ -1,25 +1,33 @@
 <template>
     <div>
         <header class="header fixed-top">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container">
-                    <div class="row">
-                        <router-link to="/" class="navbar-brand">{{title}}</router-link>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse" id="navbarNav">
-                            <form class="">
-                                <currency-select></currency-select>
-                                <router-link to="/login" class="btn btn-info">Login</router-link>
-                                <cart></cart>
-                            </form>
-                        </div>
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light">
+                    <h1><router-link to="/" class="navbar-brand">{{title}}</router-link></h1>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mr-auto">
+
+                        </ul>
+                        <form class="">
+                            <currency-select></currency-select>
+                            <span v-if="!this.$store.getters.isLoggedIn">
+                                    <router-link  to="/login" class="btn header-btn">Login</router-link>
+                            </span>
+                            <span v-else>
+                                    <router-link to="/history" class="btn header-btn">History</router-link>
+                                    <button class="btn header-btn" @click="$store.commit('logout', $store.state)">Logout</button>
+                                </span>
+                            <cart></cart>
+                        </form>
                     </div>
-                </div>
-            </nav>
+                </nav>
+            </div>
         </header>
-        <div style="height: 20px;"></div>
+        <div style="height: 55px;"></div>
     </div>
 </template>
 <script>
@@ -33,5 +41,17 @@
     }
 </script>
 <style lang="css" scoped>
+    .header-btn {
+        border: 2px solid orange;
+        margin-left: 10px;
+    }
 
+    .header-btn:hover {
+        background-color: orange;
+        color: white;
+    }
+
+    .fixed-top {
+        background-color: white;
+    }
 </style>

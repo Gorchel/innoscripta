@@ -16,5 +16,3 @@
 //});
 
 Route::get('/', 'HomeController@index');
-
-Route::get('register', 'AuthController@register');

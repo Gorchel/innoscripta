@@ -38,8 +38,8 @@ Vue.component('v-select', vSelect);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-import router from './router/index.js'
 import store from './store.js'
+import router from './router/index.js'
 import Axios from 'axios'
 
 Vue.prototype.$http = Axios;

@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedInteger('user_id')->nullable();
             $table->unsignedInteger('delivery_id');
             $table->text('goods_ids');
+            $table->decimal('total', 8, 2)->default(0);
             $table->timestamps();
         });
     }

@@ -1,5 +1,6 @@
 <template>
     <select name="currency" id="currency-list"
+            class="currency-select"
             @change="changeCurrency($event)"
             v-model="$store.state.currency.id"
     >
@@ -45,6 +46,10 @@
     }
 </script>
 <style lang="css" scoped>
-
+    .currency-select {
+        border: 2px solid orange;
+        padding: 7px 10px;
+        border-radius: 5px;
+    }
 </style>
 

@@ -11273,3 +11273,7 @@ a.text-dark:focus {
   opacity: 1;
 }
 
+body {
+  background-color: white !important;
+}
+

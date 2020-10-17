@@ -12,15 +12,34 @@ const store = new Vuex.Store({
         status: '',
     },
     actions: {
+        login({commit}, user){
+            return new Promise((resolve, reject) => {
+                commit('auth_request')
+                axios({url: '/api/auth/login', data: user, method: 'POST' })
+                    .then(resp => {
+                        const token = resp.data.token_type + ' ' + resp.data.access_token;
+                        const user = resp.data.user;
+                        localStorage.setItem('token', token);
+                        axios.defaults.headers.common['Authorization'] = token;
+                        commit('auth_success', token, user);
+                        resolve(resp)
+                    })
+                    .catch(err => {
+                        commit('auth_error')
+                        localStorage.removeItem('token')
+                        reject(err)
+                    })
+            })
+        },
         register({commit}, user){
             return new Promise((resolve, reject) => {
                 commit('auth_request')
-                axios({url: '/api/register', data: user, method: 'POST' })
+                axios({url: '/api/auth/register', data: user, method: 'POST' })
                     .then(resp => {
-                        const token = resp.data.token
+                        const token = resp.data.token_type + ' ' + resp.data.access_token;
                         const user = resp.data.user
                         localStorage.setItem('token', token)
-                        axios.defaults.headers.common['Authorization'] = token
+                        axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
                         commit('auth_success', token, user)
                         resolve(resp)
                     })
@@ -31,6 +50,14 @@ const store = new Vuex.Store({
                     })
             })
         },
+        logout({commit}){
+            return new Promise((resolve, reject) => {
+                commit('logout')
+                localStorage.removeItem('token')
+                delete axios.defaults.headers.common['Authorization']
+                resolve()
+            })
+        }
     },
     mutations: {
         setCurrency(state, currency) {

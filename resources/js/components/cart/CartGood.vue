@@ -5,7 +5,7 @@
                 <img :src="item.img_path" :alt="item.name">
             </div>
             <div class="col-6">
-                <p>{{item.name}}</p>
+                <p class="good-name"><b>{{item.name}}</b></p>
                 <p>{{item.description}}</p>
                 <p>{{item.count}}</p>
                 <p>
@@ -37,3 +37,6 @@
         }
     }
 </script>
+<style>
+
+</style>

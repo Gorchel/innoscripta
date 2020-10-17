@@ -55,12 +55,7 @@
                 this.form.errors = Object.fromEntries(res.data.errors.map(item => [item.field, item.msg]));
             },
             register: function () {
-                let data = {
-                    name: this.name,
-                    email: this.email,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation
-                };
+                let data = this.form.body;
 
                 this.$store.dispatch('register', data)
                     .then(() => this.$router.push('/'))

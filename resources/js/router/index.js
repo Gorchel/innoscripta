@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store.js'
 
 Vue.use(VueRouter);
 
@@ -8,6 +9,7 @@ import Login from '../components/pages/Login.vue';
 import Registration from '../components/pages/Registration.vue';
 import Cart from '../components/pages/Cart.vue';
 import Secure from '../components/pages/Secure.vue';
+import History from '../components/pages/History.vue';
 
 const routes = [
     { path: '/', component: Home },
@@ -15,6 +17,13 @@ const routes = [
     { path: '/cart', component: Cart },
     { path: '/registration', component: Registration },
     { path: '/secure', component: Secure },
+    {
+        path: '/history',
+        component: History,
+        meta: {
+            requiresAuth: true
+        }
+    },
 ];
 
 const router = new VueRouter({

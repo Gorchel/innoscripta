@@ -1,5 +1,5 @@
 <template>
-    <router-link to="/cart" class="btn btn-info">{{getGoodCount()}}</router-link>
+    <router-link to="/cart" class="btn header-btn">{{getGoodCount()}}</router-link>
 </template>
 <script>
     export default {
