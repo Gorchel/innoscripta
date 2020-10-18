@@ -115,6 +115,8 @@
                     data['goods_ids'][key] = value.count;
                 });
 
+                console.log(data);
+
                 axios({url: '/api/order/checkout', data: data, method: 'POST' })
                     .then(resp => {
                         this.successStatus = true;
