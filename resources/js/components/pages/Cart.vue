@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!successStatus">
+    <div v-if="!successStatus" class="cart-page">
         <div class="row" v-if="checkNotEmpty($store.state.cart)">
             <CartGood
                 v-for="item in $store.state.cart"
@@ -7,9 +7,9 @@
                 :item="item"
             ></CartGood>
             <hr/>
-            <div class="col-12">
+            <div class="col-12 cart-delivery-select">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-6">
                         <label for="delivery">Выберите доставку</label>
                         <select v-model="selectedDelivery" id="delivery" class="form-control" requred="requered">
                             <option :value="deliveryItem.id" :key="deliveryItem.id" v-for="deliveryItem in deliveryList">{{getDeliveryName(deliveryItem)}}</option>
@@ -18,12 +18,20 @@
                 </div>
             </div>
             <hr/>
-            <div class="col-12">
-                <h2>Итого: {{getAmountWithCurrency() | numFormat('0.00')}} {{this.$store.state.currency.sign}}</h2>
-            </div>
-            <div class="col-12">
-                <router-link v-if="!this.$store.getters.isLoggedIn" to="/login" class="btn btn-info">Login</router-link>
-                <button v-else class="btn btn-success" @click="checkout">Checkout</button>
+            <div class="fixed-bottom cart-footer">
+                <div class="container">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-6">
+                                <h2>Итого: {{getAmountWithCurrency() | numFormat('0.00')}} {{this.$store.state.currency.sign}}</h2>
+                            </div>
+                            <div class="col-6 text-right">
+                                <router-link v-if="!this.$store.getters.isLoggedIn" to="/login" class="btn cart-btn">Login</router-link>
+                                <button v-else class="btn cart-btn" @click="checkout">Checkout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="row" v-else>
@@ -35,7 +43,7 @@
     <div v-else>
         <p>Your order has been created</p>
         <p>
-            <router-link v-if="this.$store.getters.isLoggedIn" to="/history" class="btn btn-info">History</router-link>
+            <router-link v-if="this.$store.getters.isLoggedIn" to="/history" class="btn cart-btn">History</router-link>
         </p>
     </div>
 
@@ -125,3 +133,40 @@
         }
     }
 </script>
+<style>
+    .cart-footer {
+        background-color: white;
+    }
+
+    .cart-footer > .container {
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 10px;
+    }
+
+    .cart-page {
+        padding-bottom: 100px;
+    }
+
+    .cart-delivery-select {
+        margin: 15px 0px;
+    }
+
+    .cart-delivery-select label {
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    .cart-delivery-select select {
+        border-color: orange;
+    }
+
+    .cart-btn {
+        border: 2px solid orange;
+        margin-left: 10px;
+    }
+
+    .cart-btn:hover {
+        background-color: orange;
+        color: white;
+    }
+</style>

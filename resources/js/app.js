@@ -44,6 +44,8 @@ import Axios from 'axios'
 
 Vue.prototype.$http = Axios;
 
+console.log(localStorage.getItem('token'));
+
 const token = localStorage.getItem('token');
 
 if (token) {

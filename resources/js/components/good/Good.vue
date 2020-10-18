@@ -37,7 +37,7 @@
         background-color: orange;
         color: white;
     }
-    
+
     .good-description {
         color: grey;
     }

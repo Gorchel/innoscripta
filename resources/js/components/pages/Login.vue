@@ -1,20 +1,21 @@
 <template>
     <div>
         <LoginNav></LoginNav>
-        <form @submit.prevent="login">
+        <form @submit.prevent="login" id="login-form">
             <div class="col-6 offset-md-3">
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" v-model="form.body.email" id="email" class="form-control" placeholder="email" required="required">
-                    <div>{{ form.errors.email }}</div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" v-model="form.body.password" class="form-control" id="password" placeholder="password" required="required">
-                    <div>{{ form.errors.password }}</div>
                 </div>
+                <p class="text-center errors">
+                    {{ form.errors }}
+                </p>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-success" value="Submit">
+                    <input type="submit" class="btn login-btn" value="Submit">
                 </div>
             </div>
         </form>
@@ -36,18 +37,25 @@
                         password: '',
                         password_confirmation: '',
                     },
-                    errors: {},
+                    errors: '',
                 }
             }
         },
         methods: {
             login: function () {
-                let data = this.form.body;
+                let data = this.form.body,
+                    _this = this;
 
                 this.$store.dispatch('login', data)
                     .then(() => this.$router.push('/'))
-                    .catch(err => console.log(err))
+                    .catch(function(err) {
+                        console.log(err);
+                        _this.form.errors = "Wrong login or password";
+                    });
             }
         }
     }
 </script>
+<style>
+    @import '../../../sass/login/login.css';
+</style>

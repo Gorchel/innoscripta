@@ -19,7 +19,7 @@
                             </span>
                             <span v-else>
                                     <router-link to="/history" class="btn header-btn">History</router-link>
-                                    <button class="btn header-btn" @click="$store.commit('logout', $store.state)">Logout</button>
+                                    <button class="btn header-btn" @click="$store.dispatch('logout', $store.state)">Logout</button>
                                 </span>
                             <cart></cart>
                         </form>
@@ -53,5 +53,9 @@
 
     .fixed-top {
         background-color: white;
+    }
+
+    .navbar-brand:hover {
+        color: orange;
     }
 </style>

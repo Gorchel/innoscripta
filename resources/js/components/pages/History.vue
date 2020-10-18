@@ -1,7 +1,7 @@
 <template>
     <div class="row">
-        <div v-if="checkNotEmpty(historyList)">
-            <table class="table table-bordered">
+        <div v-if="checkNotEmpty(historyList)" class="col-12">
+            <table class="table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -67,3 +67,12 @@
         }
     }
 </script>
+<style>
+    .table td, table th {
+        border-color: orange !important;
+    }
+
+    .table th {
+        font-weight: 500;
+    }
+</style>

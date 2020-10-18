@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="login-nav">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <router-link to="/login" class="navbar-brand">Login</router-link>
@@ -16,7 +16,20 @@
     }
 </script>
 <style lang="css" scoped>
-    .router-link-active {
-        color:red;
+    .login-nav a {
+        color: black;
+        cursor: pointer;
+    }
+
+    .login-nav a.router-link-active {
+        color:orange;
+    }
+
+    .login-nav ul {
+        justify-content: center;
+    }
+
+    .login-nav {
+        margin-bottom: 15px;
     }
 </style>

@@ -1,0 +1,12 @@
+#login-form input {
+    border-color: orange;
+}
+
+#login-form .login-btn:hover {
+    color: white;
+    background-color: orange;
+}
+
+.errors {
+    color: orange;
+}
