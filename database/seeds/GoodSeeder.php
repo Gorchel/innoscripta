@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-use App\Classes\Goods\OrderCreator;
+use App\Classes\Goods\GoodCreator;
 
 class GoodSeeder extends Seeder
 {
@@ -26,7 +26,7 @@ class GoodSeeder extends Seeder
             ['name' => 'Four Cheese', 'description' => 'Tenetur maxime temporibus ipsum laboriosam veniam.', 'price' => 6.53, 'img_path' => '/img/goods/four_cheese.jpg'],
         ];
 
-        $creator = new OrderCreator;
+        $creator = new GoodCreator;
 
         foreach ($goodArray as $good) {
             $creator->make($good);
