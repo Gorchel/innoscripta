@@ -17,25 +17,26 @@ class OrderCreator implements OrderCreatorInterface
 {
     /**
      * @param array $orderData
-     * @return \App\Classes\DTO\OrderDTO
      */
-    public function make(array $orderData): array
+    public function make(array $orderData)
     {
         $validationResponse = $this->validation($orderData);
 
         if ($validationResponse['status'] != 200) {
-            return $validationResponse;
+            return ['status' => 400, 'data' => $validationResponse['msg']];
         }
 
         $dto = new OrderDTO();
         $dto->setUserId($orderData['user_id']);
+        $dto->setName($orderData['name']);
+        $dto->setAddress($orderData['address']);
         $dto->setDeliveryId($orderData['delivery_id']);
         $dto->setGoodsIds($orderData['goods_ids']);
         $dto->setTotal($orderData['total']);
 
         $storeResponse = $dto->store();
 
-        return ['status' => $storeResponse];
+        return ['status' => 200, 'data' => $storeResponse];
     }
 
     /**
@@ -45,16 +46,17 @@ class OrderCreator implements OrderCreatorInterface
     protected function validation(array $orderData): array
     {
         $rules = [
-            'user_id' => 'required|integer',
             'delivery_id' => 'required|integer',
             'goods_ids' => 'required|string',
             'total' => 'required|numeric',
+            'address' => 'required|string',
+            'name' => 'required|string',
         ];
 
         $validator = Validator::make($orderData, $rules);
 
         if ($validator->fails()) {
-            return ['status' => 400, 'msg' => $validator->messages()->all()];
+            return ['status' => 400, 'msg' => $validator->messages()];
         }
 
         return ['status' => 200];

@@ -2254,6 +2254,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+ // import AddressForm from '../cart/AddressForm';
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2277,8 +2304,16 @@ __webpack_require__.r(__webpack_exports__);
           cost: 0.80
         }
       },
-      selectedDelivery: 1,
-      successStatus: false
+      status: 1,
+      form: {
+        body: {
+          name: '',
+          address: '',
+          delivery_id: 1,
+          goods_ids: {}
+        },
+        errors: ''
+      }
     };
   },
   components: {
@@ -2304,8 +2339,11 @@ __webpack_require__.r(__webpack_exports__);
       $.each(this.$store.state.cart, function (key, value) {
         amount += value.count * value.price;
       });
-      amount += this.deliveryList[this.selectedDelivery].cost;
+      amount += this.deliveryList[this.form.body.delivery_id].cost;
       return amount;
+    },
+    setStatus: function setStatus(status) {
+      this.status = status;
     },
     getDeliveryName: function getDeliveryName(deliveryItem) {
       return deliveryItem.name + ' (' + numeral__WEBPACK_IMPORTED_MODULE_1___default()(deliveryItem.cost * this.$store.state.currency.currency).format('0.00') + ' ' + this.$store.state.currency.sign + ')';
@@ -2314,13 +2352,12 @@ __webpack_require__.r(__webpack_exports__);
       return !_.isEmpty(object);
     },
     checkout: function checkout() {
-      var _this = this;
+      var _this2 = this;
 
-      var data = {
-        delivery_id: this.selectedDelivery,
-        total: this.getAmount(),
-        goods_ids: {}
-      };
+      var data = this.form.body,
+          _this = this;
+
+      data['total'] = this.getAmount();
       $.each(this.$store.state.cart, function (key, value) {
         data['goods_ids'][key] = value.count;
       });
@@ -2329,15 +2366,23 @@ __webpack_require__.r(__webpack_exports__);
         data: data,
         method: 'POST'
       }).then(function (resp) {
-        _this.successStatus = true;
+        console.log(resp);
+        _this2.status = 3;
 
-        _this.$store.commit('setCart', {});
+        _this2.$store.commit('setCart', {});
 
-        _this.$store.commit('setCartCount');
+        _this2.$store.commit('setCartCount');
       })["catch"](function (err) {
         console.log(err.response);
-        reject(err);
+        _this.form.errors = err.response.data;
       });
+    },
+    step: function step(_step) {
+      this.setStatus(_step);
+
+      if (!this.checkNotEmpty(this.form.body.name)) {
+        this.form.body.name = this.$store.getters.getUserName;
+      }
     }
   }
 });
@@ -2355,6 +2400,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var numeral__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! numeral */ "./node_modules/numeral/numeral.js");
 /* harmony import */ var numeral__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(numeral__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
 //
 //
 //
@@ -2403,13 +2450,7 @@ __webpack_require__.r(__webpack_exports__);
         data: {},
         method: 'POST'
       }).then(function (resp) {
-        _this.historyList = resp.data.data; // this.$store.state.cart = {};
-        // const token = resp.data.access_token
-        // const user = resp.data.user
-        // localStorage.setItem('token', token)
-        // axios.defaults.headers.common['Authorization'] = token
-        // commit('auth_success', token, user)
-        // resolve(resp)
+        _this.historyList = resp.data.data;
       })["catch"](function (err) {
         reject(err);
       });
@@ -40781,7 +40822,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return !_vm.successStatus
+  return _vm.status === 1
     ? _c("div", { staticClass: "cart-page" }, [
         _vm.checkNotEmpty(_vm.$store.state.cart)
           ? _c(
@@ -40791,60 +40832,6 @@ var render = function() {
                 _vm._l(_vm.$store.state.cart, function(item) {
                   return _c("CartGood", { key: item.id, attrs: { item: item } })
                 }),
-                _vm._v(" "),
-                _c("hr"),
-                _vm._v(" "),
-                _c("div", { staticClass: "col-12 cart-delivery-select" }, [
-                  _c("div", { staticClass: "row" }, [
-                    _c("div", { staticClass: "col-6" }, [
-                      _c("label", { attrs: { for: "delivery" } }, [
-                        _vm._v("Выберите доставку")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "select",
-                        {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.selectedDelivery,
-                              expression: "selectedDelivery"
-                            }
-                          ],
-                          staticClass: "form-control",
-                          attrs: { id: "delivery", requred: "requered" },
-                          on: {
-                            change: function($event) {
-                              var $$selectedVal = Array.prototype.filter
-                                .call($event.target.options, function(o) {
-                                  return o.selected
-                                })
-                                .map(function(o) {
-                                  var val = "_value" in o ? o._value : o.value
-                                  return val
-                                })
-                              _vm.selectedDelivery = $event.target.multiple
-                                ? $$selectedVal
-                                : $$selectedVal[0]
-                            }
-                          }
-                        },
-                        _vm._l(_vm.deliveryList, function(deliveryItem) {
-                          return _c(
-                            "option",
-                            {
-                              key: deliveryItem.id,
-                              domProps: { value: deliveryItem.id }
-                            },
-                            [_vm._v(_vm._s(_vm.getDeliveryName(deliveryItem)))]
-                          )
-                        }),
-                        0
-                      )
-                    ])
-                  ])
-                ]),
                 _vm._v(" "),
                 _c("hr"),
                 _vm._v(" "),
@@ -40868,30 +40855,20 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "col-6 text-right" },
-                          [
-                            !this.$store.getters.isLoggedIn
-                              ? _c(
-                                  "router-link",
-                                  {
-                                    staticClass: "btn cart-btn",
-                                    attrs: { to: "/login" }
-                                  },
-                                  [_vm._v("Login")]
-                                )
-                              : _c(
-                                  "button",
-                                  {
-                                    staticClass: "btn cart-btn",
-                                    on: { click: _vm.checkout }
-                                  },
-                                  [_vm._v("Checkout")]
-                                )
-                          ],
-                          1
-                        )
+                        _c("div", { staticClass: "col-6 text-right" }, [
+                          _c(
+                            "button",
+                            {
+                              staticClass: "btn cart-btn",
+                              on: {
+                                click: function($event) {
+                                  return _vm.step(2)
+                                }
+                              }
+                            },
+                            [_vm._v("Checkout")]
+                          )
+                        ])
                       ])
                     ])
                   ])
@@ -40901,19 +40878,190 @@ var render = function() {
             )
           : _c("div", { staticClass: "row" }, [_vm._m(0)])
       ])
+    : _vm.status === 2
+    ? _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-6 offset-md-3" }, [
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "name" } }, [_vm._v("Name")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.form.body.name,
+                  expression: "form.body.name"
+                }
+              ],
+              staticClass: "form-control orange-input",
+              attrs: {
+                type: "name",
+                id: "name",
+                placeholder: "name",
+                required: "required"
+              },
+              domProps: { value: _vm.form.body.name },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.form.body, "name", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("span", { staticClass: "text-center errors" }, [
+              _vm._v(_vm._s(_vm.form.errors.name))
+            ])
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "address" } }, [_vm._v("Address")]),
+            _vm._v(" "),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.form.body.address,
+                  expression: "form.body.address"
+                }
+              ],
+              staticClass: "form-control orange-input",
+              attrs: {
+                type: "address",
+                id: "address",
+                placeholder: "address",
+                required: "required"
+              },
+              domProps: { value: _vm.form.body.address },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.form.body, "address", $event.target.value)
+                }
+              }
+            }),
+            _vm._v(" "),
+            _c("span", { staticClass: "text-center errors" }, [
+              _vm._v(_vm._s(_vm.form.errors.address))
+            ])
+          ]),
+          _vm._v(" "),
+          _c("hr"),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-group" }, [
+            _c("label", { attrs: { for: "delivery" } }, [
+              _vm._v("Выберите доставку")
+            ]),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.form.body.delivery_id,
+                    expression: "form.body.delivery_id"
+                  }
+                ],
+                staticClass: "form-control orange-input",
+                attrs: { id: "delivery", requred: "requered" },
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.$set(
+                      _vm.form.body,
+                      "delivery_id",
+                      $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                    )
+                  }
+                }
+              },
+              _vm._l(_vm.deliveryList, function(deliveryItem) {
+                return _c(
+                  "option",
+                  {
+                    key: deliveryItem.id,
+                    domProps: { value: deliveryItem.id }
+                  },
+                  [_vm._v(_vm._s(_vm.getDeliveryName(deliveryItem)))]
+                )
+              }),
+              0
+            ),
+            _vm._v(" "),
+            _c("span", { staticClass: "text-center errors" }, [
+              _vm._v(_vm._s(_vm.form.errors.delivery_id))
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("hr"),
+        _vm._v(" "),
+        _c("div", { staticClass: "fixed-bottom cart-footer" }, [
+          _c("div", { staticClass: "container" }, [
+            _c("div", { staticClass: "col-12" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-6" }, [
+                  _c("h2", [
+                    _vm._v(
+                      "Итого: " +
+                        _vm._s(
+                          _vm._f("numFormat")(
+                            _vm.getAmountWithCurrency(),
+                            "0.00"
+                          )
+                        ) +
+                        " " +
+                        _vm._s(this.$store.state.currency.sign)
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-6 text-right" }, [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn cart-btn",
+                      on: { click: _vm.checkout }
+                    },
+                    [_vm._v("Checkout")]
+                  )
+                ])
+              ])
+            ])
+          ])
+        ])
+      ])
     : _c("div", [
         _c("p", [_vm._v("Your order has been created")]),
         _vm._v(" "),
         _c(
           "p",
           [
-            this.$store.getters.isLoggedIn
+            !this.$store.getters.isLoggedIn
               ? _c(
+                  "router-link",
+                  { staticClass: "btn cart-btn", attrs: { to: "/" } },
+                  [_vm._v("Home")]
+                )
+              : _c(
                   "router-link",
                   { staticClass: "btn cart-btn", attrs: { to: "/history" } },
                   [_vm._v("History")]
                 )
-              : _vm._e()
           ],
           1
         )
@@ -40966,6 +41114,8 @@ var render = function() {
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(history.delivery_id))]),
                   _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(history.address))]),
+                  _vm._v(" "),
                   _c("td", [
                     _vm._v(
                       _vm._s(_vm.getTotalWithCurrency(history.total)) +
@@ -40994,6 +41144,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Дата")]),
         _vm._v(" "),
         _c("th", [_vm._v("Тип доставки")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Адрес")]),
         _vm._v(" "),
         _c("th", [_vm._v("Сумма")])
       ])
@@ -58292,6 +58444,7 @@ new Vue({
   },
   router: _router_index_js__WEBPACK_IMPORTED_MODULE_6__["default"],
   beforeMount: function beforeMount() {
+    this.$store.dispatch('me');
     if (this.$localStorage.get('cart')) this.$store.commit('setCart', JSON.parse(this.$localStorage.get('cart')));
     if (this.$localStorage.get('currency')) this.$store.commit('setCurrency', JSON.parse(this.$localStorage.get('currency')));
   }
@@ -59552,6 +59705,18 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         delete axios.defaults.headers.common['Authorization'];
         resolve();
       });
+    },
+    me: function me(_ref4) {
+      var commit = _ref4.commit;
+      return new Promise(function (resolve, reject) {
+        axios({
+          url: '/api/auth/me',
+          data: {},
+          method: 'POST'
+        }).then(function (resp) {
+          commit('setUser', resp.data);
+        });
+      });
     }
   },
   mutations: {
@@ -59560,6 +59725,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     setCart: function setCart(state, cart) {
       state.cart = cart;
+      localStorage.setItem('cart', JSON.stringify(cart));
     },
     incrementCart: function incrementCart(state, good) {
       if (_.isUndefined(state.cart[good.id])) {
@@ -59577,6 +59743,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       });
 
       state.cartCount = count;
+    },
+    setUser: function setUser(state, user) {
+      state.user = user;
     },
     auth_request: function auth_request(state) {
       state.status = 'loading';
@@ -59606,6 +59775,9 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     },
     authStatus: function authStatus(state) {
       return state.status;
+    },
+    getUserName: function getUserName(state) {
+      return state.user.name;
     }
   }
 });

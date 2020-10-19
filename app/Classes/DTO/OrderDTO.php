@@ -30,7 +30,7 @@ class OrderDTO
      * @param int $id
      * @return Order
      */
-    public function setUserId(int $id): Order
+    public function setUserId(?int $id): Order
     {
         $this->order->user_id = $id;
         return $this->order;
@@ -66,6 +66,25 @@ class OrderDTO
         return $this->order;
     }
 
+    /**
+     * @param string $address
+     * @return Order
+     */
+    public function setAddress(string $address): Order
+    {
+        $this->order->address = $address;
+        return $this->order;
+    }
+
+    /**
+     * @param string $name
+     * @return Order
+     */
+    public function setName(string $name): Order
+    {
+        $this->order->name = $name;
+        return $this->order;
+    }
 
     /**
      * @return Order

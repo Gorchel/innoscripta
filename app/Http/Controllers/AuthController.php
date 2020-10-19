@@ -88,6 +88,7 @@ class AuthController extends Controller
      */
     public function me()
     {
+        \Log::info(auth()->user());
         return response()->json(auth()->user());
     }
 

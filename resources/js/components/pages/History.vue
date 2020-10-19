@@ -7,6 +7,7 @@
                         <th>#</th>
                         <th>Дата</th>
                         <th>Тип доставки</th>
+                        <th>Адрес</th>
                         <th>Сумма</th>
                     </tr>
                 </thead>
@@ -15,6 +16,7 @@
                         <td>{{history.id}}</td>
                         <td>{{history.created_at}}</td>
                         <td>{{history.delivery_id}}</td>
+                        <td>{{history.address}}</td>
                         <td>{{getTotalWithCurrency(history.total)}} {{$store.state.currency.sign}}</td>
                     </tr>
                 </tbody>
@@ -45,13 +47,6 @@
                 axios({url: '/api/order/orderHistory', data: {}, method: 'POST' })
                     .then(resp => {
                         _this.historyList = resp.data.data;
-                        // this.$store.state.cart = {};
-                        // const token = resp.data.access_token
-                        // const user = resp.data.user
-                        // localStorage.setItem('token', token)
-                        // axios.defaults.headers.common['Authorization'] = token
-                        // commit('auth_success', token, user)
-                        // resolve(resp)
                     })
                     .catch(err => {
                         reject(err)

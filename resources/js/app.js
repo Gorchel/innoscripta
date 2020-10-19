@@ -56,6 +56,8 @@ new Vue({
     components: { App },
     router: router,
     beforeMount() {
+        this.$store.dispatch('me');
+
         if(this.$localStorage.get('cart')) this.$store.commit('setCart', JSON.parse(this.$localStorage.get('cart')));
         if(this.$localStorage.get('currency')) this.$store.commit('setCurrency', JSON.parse(this.$localStorage.get('currency')));
     },

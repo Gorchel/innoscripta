@@ -12,5 +12,5 @@ interface OrderCreatorInterface
      * @param $orderData
      * @return array
      */
-    public function make(array $orderData): array;
+    public function make(array $orderData);
 }

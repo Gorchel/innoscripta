@@ -19,14 +19,18 @@ class OrderController extends Controller
     public function checkout(Request $request, OrderCreator $orderCreator)
     {
         $orderData = [
-            'user_id' => auth()->user()->id,
+            'user_id' => !empty(auth()->user()) ? auth()->user()->id : null,
             'delivery_id' => $request->get('delivery_id'),
             'total' => $request->get('total'),
             'goods_ids' => json_encode($request->get('goods_ids')),
+            'address' => $request->get('address'),
+            'name' => $request->get('name'),
         ];
+
+        \Log::info($orderData);
 
         $response = $orderCreator->make($orderData);
 
-        return response()->json($response);
+        return response()->json($response['data'], $response['status']);
     }
 }

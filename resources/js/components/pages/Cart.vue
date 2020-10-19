@@ -1,22 +1,11 @@
 <template>
-    <div v-if="!successStatus" class="cart-page">
+    <div v-if="status === 1" class="cart-page">
         <div class="row" v-if="checkNotEmpty($store.state.cart)">
             <CartGood
                 v-for="item in $store.state.cart"
                 :key="item.id"
                 :item="item"
             ></CartGood>
-            <hr/>
-            <div class="col-12 cart-delivery-select">
-                <div class="row">
-                    <div class="col-6">
-                        <label for="delivery">Выберите доставку</label>
-                        <select v-model="selectedDelivery" id="delivery" class="form-control" requred="requered">
-                            <option :value="deliveryItem.id" :key="deliveryItem.id" v-for="deliveryItem in deliveryList">{{getDeliveryName(deliveryItem)}}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
             <hr/>
             <div class="fixed-bottom cart-footer">
                 <div class="container">
@@ -26,8 +15,7 @@
                                 <h2>Итого: {{getAmountWithCurrency() | numFormat('0.00')}} {{this.$store.state.currency.sign}}</h2>
                             </div>
                             <div class="col-6 text-right">
-                                <router-link v-if="!this.$store.getters.isLoggedIn" to="/login" class="btn cart-btn">Login</router-link>
-                                <button v-else class="btn cart-btn" @click="checkout">Checkout</button>
+                                <button class="btn cart-btn" @click="step(2)">Checkout</button>
                             </div>
                         </div>
                     </div>
@@ -40,10 +28,48 @@
             </div>
         </div>
     </div>
+    <div v-else-if="status === 2" class="row">
+        <div class="col-6 offset-md-3">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="name" v-model="form.body.name" class="form-control orange-input" id="name" placeholder="name" required="required">
+                <span class="text-center errors">{{ form.errors.name }}</span>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="address" v-model="form.body.address" id="address" class="form-control orange-input" placeholder="address" required="required">
+                <span class="text-center errors">{{ form.errors.address }}</span>
+            </div>
+            <hr/>
+            <div class="form-group">
+                <label for="delivery">Выберите доставку</label>
+                <select v-model="form.body.delivery_id" id="delivery" class="form-control orange-input" requred="requered">
+                    <option :value="deliveryItem.id" :key="deliveryItem.id" v-for="deliveryItem in deliveryList">{{getDeliveryName(deliveryItem)}}</option>
+                </select>
+                <span class="text-center errors">{{ form.errors.delivery_id }}</span>
+            </div>
+        </div>
+        <hr/>
+        <div class="fixed-bottom cart-footer">
+            <div class="container">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-6">
+                            <h2>Итого: {{getAmountWithCurrency() | numFormat('0.00')}} {{this.$store.state.currency.sign}}</h2>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button class="btn cart-btn" @click="checkout">Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div v-else>
         <p>Your order has been created</p>
         <p>
-            <router-link v-if="this.$store.getters.isLoggedIn" to="/history" class="btn cart-btn">History</router-link>
+            <router-link v-if="!this.$store.getters.isLoggedIn" to="/" class="btn cart-btn">Home</router-link>
+            <router-link v-else to="/history" class="btn cart-btn">History</router-link>
         </p>
     </div>
 
@@ -51,6 +77,7 @@
 
 <script>
     import CartGood from '../cart/CartGood';
+    // import AddressForm from '../cart/AddressForm';
     import numeral from 'numeral';
 
     export default {
@@ -62,8 +89,16 @@
                     2: {id: 2, name: 'delivery 2', cost: 0.60},
                     3: {id: 3, name: 'delivery 3', cost: 0.80},
                 },
-                selectedDelivery: 1,
-                successStatus: false,
+                status: 1,
+                form: {
+                    body: {
+                        name: '',
+                        address: '',
+                        delivery_id: 1,
+                        goods_ids: {},
+                    },
+                    errors: '',
+                }
             }
         },
         components: {CartGood},
@@ -92,9 +127,12 @@
                     amount += (value.count * value.price);
                 });
 
-                amount += this.deliveryList[this.selectedDelivery].cost;
+                amount += this.deliveryList[this.form.body.delivery_id].cost;
 
                 return amount;
+            },
+            setStatus(status) {
+              this.status = status;
             },
             getDeliveryName(deliveryItem)
             {
@@ -105,11 +143,10 @@
             },
             checkout()
             {
-                var data = {
-                    delivery_id: this.selectedDelivery,
-                    total: this.getAmount(),
-                    goods_ids: {},
-                };
+                var data = this.form.body,
+                    _this = this;
+
+                data['total'] = this.getAmount();
 
                 $.each(this.$store.state.cart, function(key, value) {
                     data['goods_ids'][key] = value.count;
@@ -117,14 +154,22 @@
 
                 axios({url: '/api/order/checkout', data: data, method: 'POST' })
                     .then(resp => {
-                        this.successStatus = true;
+                        console.log(resp);
+                        this.status = 3;
                         this.$store.commit('setCart', {});
                         this.$store.commit('setCartCount');
                     })
                     .catch(err => {
                         console.log(err.response);
-                        reject(err)
+                        _this.form.errors = err.response.data;
                     })
+            },
+            step(step) {
+                this.setStatus(step);
+
+                if (!this.checkNotEmpty(this.form.body.name)) {
+                    this.form.body.name = this.$store.getters.getUserName;
+                }
             }
         }
     }

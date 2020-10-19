@@ -59,6 +59,14 @@ const store = new Vuex.Store({
                 resolve()
             })
         },
+        me({commit}){
+            return new Promise((resolve, reject) => {
+                axios({url: '/api/auth/me', data: {}, method: 'POST' })
+                    .then(resp => {
+                        commit('setUser', resp.data);
+                    });
+            });
+        },
     },
     mutations: {
         setCurrency(state, currency) {
@@ -66,6 +74,7 @@ const store = new Vuex.Store({
         },
         setCart(state, cart) {
             state.cart = cart;
+            localStorage.setItem('cart', JSON.stringify(cart));
         },
         incrementCart(state, good) {
             if (_.isUndefined(state.cart[good.id])) {
@@ -83,6 +92,9 @@ const store = new Vuex.Store({
             });
 
             state.cartCount = count;
+        },
+        setUser(state, user) {
+            state.user = user;
         },
         auth_request(state){
             state.status = 'loading'
@@ -107,6 +119,7 @@ const store = new Vuex.Store({
         getCartCount: state => state.cartCount,
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
+        getUserName: state => state.user.name,
     },
 });
 
