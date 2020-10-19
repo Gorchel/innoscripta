@@ -1953,10 +1953,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "cart",
-  methods: {
-    getGoodCount: function getGoodCount() {
-      return this.$store.getters.getCartCount;
-    }
+  mounted: function mounted() {
+    this.$store.commit('setCartCount');
   }
 });
 
@@ -2001,6 +1999,7 @@ __webpack_require__.r(__webpack_exports__);
     removeItem: function removeItem(id) {
       // delete this.$store.state.cart[id];
       Vue["delete"](this.$store.state.cart, id);
+      this.$store.commit('setCartCount');
       this.changeLocalStorageCart();
     },
     changeLocalStorageCart: function changeLocalStorageCart() {
@@ -2095,6 +2094,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     addToCart: function addToCart(good) {
       this.$store.commit('incrementCart', good);
+      this.$store.commit('setCartCount');
       this.changeLocalStorageCart();
     },
     changeLocalStorageCart: function changeLocalStorageCart() {
@@ -2324,23 +2324,18 @@ __webpack_require__.r(__webpack_exports__);
       $.each(this.$store.state.cart, function (key, value) {
         data['goods_ids'][key] = value.count;
       });
-      console.log(data);
       axios({
         url: '/api/order/checkout',
         data: data,
         method: 'POST'
       }).then(function (resp) {
-        console.log(resp);
         _this.successStatus = true;
 
-        _this.$store.commit('setCart', {}); // const token = resp.data.access_token
-        // const user = resp.data.user
-        // localStorage.setItem('token', token)
-        // axios.defaults.headers.common['Authorization'] = token
-        // commit('auth_success', token, user)
-        // resolve(resp)
+        _this.$store.commit('setCart', {});
 
+        _this.$store.commit('setCartCount');
       })["catch"](function (err) {
+        console.log(err.response);
         reject(err);
       });
     }
@@ -2475,16 +2470,9 @@ __webpack_require__.r(__webpack_exports__);
       axios.get("/api/good/list/" + type).then(function (response) {
         _this.list = response.data;
       })["catch"](function (error) {
-        console.log(error);
+        console.log(error.response);
       });
-    } // changeCurrency(event) {
-    //     this.setCurrency(this.list[event.target.value]);
-    // },
-    // setCurrency(currency) {
-    //     this.$currency = currency;
-    //     this.$localStorage.set('currency', JSON.stringify(this.$currency));
-    // }
-
+    }
   },
   components: {
     Good: _good_Good__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -2607,6 +2595,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'registration',
@@ -2633,13 +2622,17 @@ __webpack_require__.r(__webpack_exports__);
       }));
     },
     register: function register() {
-      var _this = this;
+      var _this2 = this;
 
-      var data = this.form.body;
+      var data = this.form.body,
+          _this = this;
+
+      this.form.errors = {};
       this.$store.dispatch('register', data).then(function () {
-        return _this.$router.push('/');
+        return _this2.$router.push('/');
       })["catch"](function (err) {
-        console.log(err);
+        _this.form.errors = err.response.data.errors;
+        console.log(err.response);
       });
     }
   }
@@ -40383,7 +40376,7 @@ var render = function() {
   return _c(
     "router-link",
     { staticClass: "btn header-btn", attrs: { to: "/cart" } },
-    [_vm._v(_vm._s(_vm.getGoodCount()))]
+    [_vm._v(_vm._s(this.$store.getters.getCartCount))]
   )
 }
 var staticRenderFns = []
@@ -41235,7 +41228,11 @@ var render = function() {
                     _vm.$set(_vm.form.body, "name", $event.target.value)
                   }
                 }
-              })
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-center errors" }, [
+                _vm._v(_vm._s(_vm.form.errors.name))
+              ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
@@ -41266,7 +41263,11 @@ var render = function() {
                     _vm.$set(_vm.form.body, "email", $event.target.value)
                   }
                 }
-              })
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-center errors" }, [
+                _vm._v(_vm._s(_vm.form.errors.email))
+              ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
@@ -41297,7 +41298,11 @@ var render = function() {
                     _vm.$set(_vm.form.body, "password", $event.target.value)
                   }
                 }
-              })
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-center errors" }, [
+                _vm._v(_vm._s(_vm.form.errors.password))
+              ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "form-group" }, [
@@ -41334,15 +41339,11 @@ var render = function() {
                     )
                   }
                 }
-              })
-            ]),
-            _vm._v(" "),
-            _c("p", { staticClass: "text-center errors" }, [
-              _vm._v(
-                "\n                " +
-                  _vm._s(_vm.form.errors) +
-                  "\n            "
-              )
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "text-center errors" }, [
+                _vm._v(_vm._s(_vm.form.errors.password_confirmation))
+              ])
             ]),
             _vm._v(" "),
             _vm._m(0)
@@ -59493,6 +59494,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
     currency: {},
     cart: {},
+    cartCount: 0,
     token: localStorage.getItem('token') || '',
     user: {},
     status: ''
@@ -59567,6 +59569,15 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
         state.cart[good.id]['count'] = state.cart[good.id]['count'] + 1;
       }
     },
+    setCartCount: function setCartCount(state) {
+      var count = 0;
+
+      _.each(state.cart, function (item) {
+        count += item.count;
+      });
+
+      state.cartCount = count;
+    },
     auth_request: function auth_request(state) {
       state.status = 'loading';
     },
@@ -59588,13 +59599,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
       return state.cart;
     },
     getCartCount: function getCartCount(state) {
-      var count = 0;
-
-      _.each(state.cart, function (item) {
-        count += item.count;
-      });
-
-      return count;
+      return state.cartCount;
     },
     isLoggedIn: function isLoggedIn(state) {
       return !!state.token;

@@ -50,10 +50,7 @@ class AuthController extends Controller
         $validator = $this->validator($credentials);
 
         if ($validator->fails()) {
-            return response()->json([
-                'status' => 400,
-                'msg' => $validator->messages()
-            ]);
+            return response()->json(['errors' => $validator->messages()], 401);
         }
 
         User::create([

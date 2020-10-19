@@ -119,8 +119,10 @@
                     .then(resp => {
                         this.successStatus = true;
                         this.$store.commit('setCart', {});
+                        this.$store.commit('setCartCount');
                     })
                     .catch(err => {
+                        console.log(err.response);
                         reject(err)
                     })
             }

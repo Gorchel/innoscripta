@@ -1,13 +1,11 @@
 <template>
-    <router-link to="/cart" class="btn header-btn">{{getGoodCount()}}</router-link>
+    <router-link to="/cart" class="btn header-btn">{{this.$store.getters.getCartCount}}</router-link>
 </template>
 <script>
     export default {
         name: "cart",
-        methods: {
-            getGoodCount() {
-                return this.$store.getters.getCartCount;
-            }
+        mounted() {
+            this.$store.commit('setCartCount');
         }
     }
 </script>

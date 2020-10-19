@@ -16,6 +16,7 @@
         methods: {
             addToCart(good) {
                 this.$store.commit('incrementCart', good);
+                this.$store.commit('setCartCount');
                 this.changeLocalStorageCart();
             },
             changeLocalStorageCart() {

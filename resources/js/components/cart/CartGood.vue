@@ -29,6 +29,7 @@
             removeItem(id) {
                 // delete this.$store.state.cart[id];
                 Vue.delete(this.$store.state.cart, id);
+                this.$store.commit('setCartCount');
                 this.changeLocalStorageCart();
             },
             changeLocalStorageCart() {

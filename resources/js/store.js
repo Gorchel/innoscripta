@@ -7,6 +7,7 @@ const store = new Vuex.Store({
     state: {
         currency: {},
         cart: {},
+        cartCount: 0,
         token: localStorage.getItem('token') || '',
         user : {},
         status: '',
@@ -57,7 +58,7 @@ const store = new Vuex.Store({
                 delete axios.defaults.headers.common['Authorization'];
                 resolve()
             })
-        }
+        },
     },
     mutations: {
         setCurrency(state, currency) {
@@ -73,6 +74,15 @@ const store = new Vuex.Store({
             } else {
                 state.cart[good.id]['count'] = state.cart[good.id]['count'] + 1;
             }
+        },
+        setCartCount(state) {
+            var count = 0;
+
+            _.each(state.cart, function(item){
+                count += item.count;
+            });
+
+            state.cartCount = count;
         },
         auth_request(state){
             state.status = 'loading'
@@ -94,15 +104,7 @@ const store = new Vuex.Store({
         getCart: state => {
             return state.cart;
         },
-        getCartCount: state => {
-            var count = 0;
-
-            _.each(state.cart, function(item){
-                count += item.count;
-            });
-
-            return count;
-        },
+        getCartCount: state => state.cartCount,
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
     },
