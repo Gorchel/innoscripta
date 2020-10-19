@@ -33,16 +33,9 @@
                 axios.get("/api/good/list/" + type).then(response => {
                     this.list = response.data;
                 }).catch(error => {
-                    console.log(error);
+                    console.log(error.response);
                 });
             },
-            // changeCurrency(event) {
-            //     this.setCurrency(this.list[event.target.value]);
-            // },
-            // setCurrency(currency) {
-            //     this.$currency = currency;
-            //     this.$localStorage.set('currency', JSON.stringify(this.$currency));
-            // }
         },
         components: {Good},
     }
