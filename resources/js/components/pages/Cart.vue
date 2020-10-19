@@ -115,19 +115,10 @@
                     data['goods_ids'][key] = value.count;
                 });
 
-                console.log(data);
-
                 axios({url: '/api/order/checkout', data: data, method: 'POST' })
                     .then(resp => {
-                        console.log(resp);
                         this.successStatus = true;
                         this.$store.commit('setCart', {});
-                        // const token = resp.data.access_token
-                        // const user = resp.data.user
-                        // localStorage.setItem('token', token)
-                        // axios.defaults.headers.common['Authorization'] = token
-                        // commit('auth_success', token, user)
-                        // resolve(resp)
                     })
                     .catch(err => {
                         reject(err)

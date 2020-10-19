@@ -29,7 +29,7 @@ class HistoryGetter implements HistoryGetterInterface
     public function getList(array $options = [])
     {
         $options = [
-            'usser_id' => auth()->user()->id,
+            'user_id' => auth()->user()->id,
         ];
 
         return $this->worker->getList($options);
