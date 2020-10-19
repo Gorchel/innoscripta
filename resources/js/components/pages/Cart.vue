@@ -119,6 +119,7 @@
 
                 axios({url: '/api/order/checkout', data: data, method: 'POST' })
                     .then(resp => {
+                        console.log(resp);
                         this.successStatus = true;
                         this.$store.commit('setCart', {});
                         // const token = resp.data.access_token

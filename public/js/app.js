@@ -2324,11 +2324,13 @@ __webpack_require__.r(__webpack_exports__);
       $.each(this.$store.state.cart, function (key, value) {
         data['goods_ids'][key] = value.count;
       });
+      console.log(data);
       axios({
         url: '/api/order/checkout',
         data: data,
         method: 'POST'
       }).then(function (resp) {
+        console.log(resp);
         _this.successStatus = true;
 
         _this.$store.commit('setCart', {}); // const token = resp.data.access_token
@@ -58275,7 +58277,6 @@ Vue.component('v-select', vue_select__WEBPACK_IMPORTED_MODULE_1___default.a);
 
 
 Vue.prototype.$http = axios__WEBPACK_IMPORTED_MODULE_7___default.a;
-console.log(localStorage.getItem('token'));
 var token = localStorage.getItem('token');
 
 if (token) {
